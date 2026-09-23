@@ -3,8 +3,8 @@ import json
 def load_metadata(filepath):
     try:
         with open(filepath, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-    except FileNotFoundError:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
         return {}
 
 def save_metadata(filepath, data):

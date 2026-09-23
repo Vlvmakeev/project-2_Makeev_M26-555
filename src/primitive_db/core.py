@@ -1,13 +1,13 @@
-from utils import load_metadata
+from .utils import load_metadata, save_metadata
 
 def create_table(metadata, table_name, columns):
 
     valid_types = {"int", "str", "bool"}
     
-    tables = load_metadata(metadata)
+    tables = metadata
 
     if table_name in tables:
-        print("Ошибка: таблица {table_name} уже существует!")
+        print(f"Ошибка: таблица {table_name} уже существует!")
         return None
 
     id_column = ("ID", "int")
@@ -19,8 +19,29 @@ def create_table(metadata, table_name, columns):
                   f"Разрешены только: {', '.join(valid_types)}")
             return None
 
+    tables[table_name] = {
+        "columns": all_columns
+    }
+
+    columns_string = ", ".join([f"{name}:{dtype}" for name, dtype in all_columns])
+    print(f"Таблица '{table_name}' успешно создана со столбцами: {columns_string}")
+
+    save_metadata("src/primitive_db/db_meta.json", tables)
+
+    return load_metadata("src/primitive_db/db_meta.json")
+
 def drop_table(metadata, table_name):
-    pass
+    tables = metadata
+    if table_name not in tables:
+        print(f"Ошибка: таблицы {table_name} не существует!")
+        return None
+    tables.pop(table_name)
+
+    print(f"Таблица {table_name} успешно удалена.")
+
+    save_metadata("src/primitive_db/db_meta.json", tables)
+
+    return load_metadata("src/primitive_db/db_meta.json")
 
 def list_tables():
     pass

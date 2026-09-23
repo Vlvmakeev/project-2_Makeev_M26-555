@@ -4,8 +4,14 @@ import prompt
 
 import shlex
 
+from .utils import load_metadata, save_metadata
+
+from . import core
+
 
 def welcome():
+    metadata = load_metadata("src/primitive_db/db_meta.json")
+
     print("Первая попытка запустить проект!")
 
     print("\n")
@@ -14,15 +20,23 @@ def welcome():
 
     command = prompt.string("Введите команду: ")
 
-    if command == "exit":
-        sys.exit()
-    elif command == "help":
-            print("***")
-            print("<command> exit - выйти из программы")
-            print("<command> help - справочная информация")
+    if command != "":
+        args = shlex.split(command)
+
+    match args[0]:
+        case "exit":
+            sys.exit()
+        case "help":
+            print_help()
             command = prompt.string("Введите команду: ")
-    else:
-         command = prompt.string("Введите команду: ")
+        case "create_table":
+            table_name = args[1]
+            columns = [tuple(col.split(':', 1)) for col in args[2:]]
+            core.create_table(metadata, table_name, columns)
+        case "drop_table":
+            core.drop_table(metadata, args[1])
+        case _:
+            command = prompt.string("Введите команду: ")
 
 
 def print_help():
@@ -41,3 +55,6 @@ def print_help():
 
 def run():
      pass
+     while(True):
+        load_metadata("src/primitive_db/db_meta.json")
+        welcome()
