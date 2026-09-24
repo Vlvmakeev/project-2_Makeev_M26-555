@@ -8,37 +8,41 @@ from .utils import load_metadata, save_metadata
 
 from . import core
 
+available_commands = {"create_table", "list_tables", "drop_table", "exit", "help"}
+metadata = load_metadata("src/primitive_db/db_meta.json")
 
 def welcome():
-    metadata = load_metadata("src/primitive_db/db_meta.json")
-
     print("Первая попытка запустить проект!")
-
-    print("\n")
-
-    command = ""
 
     command = prompt.string("Введите команду: ")
 
-    if command != "":
-        args = shlex.split(command)
+    if not command.strip():
+        return
 
-    match args[0]:
+    args = shlex.split(command)
+    user_command = args[0]
+
+    match user_command:
+        case wrong_command if wrong_command not in available_commands:
+            print(f"Функции {wrong_command} нет. Попробуйте снова.")
+            return
+        
         case "exit":
             sys.exit()
+        
         case "help":
             print_help()
-            command = prompt.string("Введите команду: ")
+        
         case "create_table":
             table_name = args[1]
             columns = [tuple(col.split(':', 1)) for col in args[2:]]
             core.create_table(metadata, table_name, columns)
+        
         case "drop_table":
             core.drop_table(metadata, args[1])
+        
         case "list_tables":
             core.list_tables(metadata)
-        case _:
-            command = prompt.string("Введите команду: ")
 
 
 def print_help():
@@ -56,7 +60,5 @@ def print_help():
 
 
 def run():
-     pass
-     while(True):
-        load_metadata("src/primitive_db/db_meta.json")
+    while True:
         welcome()

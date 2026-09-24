@@ -11,7 +11,11 @@ def create_table(metadata, table_name, columns):
         return None
 
     id_column = ("ID", "int")
-    all_columns = [id_column] + list(columns)
+
+    if id_column not in columns:
+        all_columns = [id_column] + list(columns)
+    else:
+        all_columns = list(columns)
 
     for col_name, col_type in all_columns:
         if col_type not in valid_types:
