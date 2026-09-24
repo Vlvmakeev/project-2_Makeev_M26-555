@@ -35,6 +35,8 @@ def welcome():
             core.create_table(metadata, table_name, columns)
         case "drop_table":
             core.drop_table(metadata, args[1])
+        case "list_tables":
+            core.list_tables(metadata)
         case _:
             command = prompt.string("Введите команду: ")
 

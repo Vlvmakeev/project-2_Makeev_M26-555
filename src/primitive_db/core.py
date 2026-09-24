@@ -43,5 +43,6 @@ def drop_table(metadata, table_name):
 
     return load_metadata("src/primitive_db/db_meta.json")
 
-def list_tables():
-    pass
+def list_tables(metadata):
+    for key in metadata:
+        print("-", key)
