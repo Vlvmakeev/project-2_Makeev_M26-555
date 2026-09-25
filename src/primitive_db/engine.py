@@ -8,7 +8,10 @@ from .utils import load_metadata, save_metadata
 
 from . import core
 
-available_commands = {"create_table", "list_tables", "drop_table", "exit", "help"}
+tables_commands = {"create_table", "list_tables", "drop_table"}
+sql_commands = {"insert", "select", "update", "delete", "info"}
+system_commands = {"help", "exit"}
+available_commands = {"create_table", "list_tables", "drop_table", "exit", "help", "insert"}
 metadata = load_metadata("src/primitive_db/db_meta.json")
 
 def welcome():
@@ -44,6 +47,9 @@ def welcome():
         case "list_tables":
             core.list_tables(metadata)
 
+        case "insert":
+            core.insert(metadata, args[2], args[4])
+
 
 def print_help():
     """Prints the help message for the current mode."""
@@ -53,6 +59,15 @@ def print_help():
     print("<command> create_table <имя_таблицы> <столбец1:тип> .. - создать таблицу")
     print("<command> list_tables - показать список всех таблиц")
     print("<command> drop_table <имя_таблицы> - удалить таблицу")
+    
+    print("\n***Операции с данными***")
+    print("<command> insert into <имя_таблицы> values (<значение1>, <значение2>, ...) - создать запись.")
+    print("<command> select from <имя_таблицы> where <столбец> = <значение> - прочитать записи по условию.")
+    print("<command> select from <имя_таблицы> - прочитать все записи.")
+    print("<command> update <имя_таблицы> set <столбец1> = <новое_значение1> where <столбец_условия> = <значение_условия> - обновить запись.")
+    print("<command> delete from <имя_таблицы> where <столбец> = <значение> - удалить запись.")
+    print("<command> info <имя_таблицы> - вывести информацию о таблице.")
+
     
     print("\nОбщие команды:")
     print("<command> exit - выход из программы")

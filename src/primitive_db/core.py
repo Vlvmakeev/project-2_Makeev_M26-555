@@ -34,6 +34,7 @@ def create_table(metadata, table_name, columns):
 
     return load_metadata("src/primitive_db/db_meta.json")
 
+
 def drop_table(metadata, table_name):
     tables = metadata
     if table_name not in tables:
@@ -47,6 +48,53 @@ def drop_table(metadata, table_name):
 
     return load_metadata("src/primitive_db/db_meta.json")
 
+
 def list_tables(metadata):
     for key in metadata:
         print("-", key)
+
+
+def insert(metadata, table_name, values):
+    tables = metadata
+
+    current_table = tables[table_name]
+    current_table_columns = current_table["columns"]
+
+    if table_name not in tables:
+        print(f"Ошибка: таблица {table_name} не существует!")
+        return None
+
+    print(len(values))
+    print(values)
+    print(len(current_table_columns))
+    print(current_table_columns)
+
+    if len(values) != len(current_table_columns) - 1:
+        print(f"Ошибка: количество переданных значений не соответствует количеству полей таблицы {table_name} !")
+        return None
+    
+    current_table_columns.pop(0)
+    value_count = 0
+    
+    for value in values:
+        if not isinstance(value, current_table_columns[value_count][1]):
+            f"Ошибка: тип данных переданного значения {value} "
+            f"не соответствует ожидаемому типу {current_table_columns[value_count][1]} "
+            f"поля {current_table_columns[value_count][0]} "
+            f"таблицы {table_name} !"
+
+    columns_val = [col[0] for col in current_table_columns]
+    table_rows = load_metadata("src/primitive_db/data/users.json")
+    id_count
+    new_row = zip(columns_val, values)
+    if table_rows == {}:
+        id_count = 1
+        rows = []
+        rows.append(
+            new_row
+        )
+    else:
+        id_count = len(table_rows) + 1
+        table_rows.append(new_row)
+
+    
