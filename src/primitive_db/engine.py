@@ -2,28 +2,37 @@ import sys
 
 import prompt
 
+import sqlparse
+
 import shlex
 
 from .utils import load_metadata, save_metadata
+
+from .parser import sql_parser
 
 from . import core
 
 tables_commands = {"create_table", "list_tables", "drop_table"}
 sql_commands = {"insert", "select", "update", "delete", "info"}
 system_commands = {"help", "exit"}
-available_commands = {"create_table", "list_tables", "drop_table", "exit", "help", "insert"}
+available_commands = tables_commands | sql_commands | system_commands
 metadata = load_metadata("src/primitive_db/db_meta.json")
 
 def welcome():
     print("Первая попытка запустить проект!")
 
     command = prompt.string("Введите команду: ")
+    args = ""
+    user_command = ""
 
     if not command.strip():
         return
 
-    args = shlex.split(command)
-    user_command = args[0]
+    if command.split()[0] in sql_commands:
+        sql_parser(command)
+    else:
+        args = shlex.split(command)
+        user_command = args[0]
 
     match user_command:
         case wrong_command if wrong_command not in available_commands:
