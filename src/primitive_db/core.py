@@ -53,6 +53,25 @@ def list_tables(metadata):
     for key in metadata:
         print("-", key)
 
+def info(metadata, table_name):
+    tables = metadata
+    
+    if table_name not in tables:
+        print(f"Ошибка: таблицы {table_name} не существует!")
+        return None
+
+    current_table = ''
+
+    current_table = tables[table_name]
+
+    table_columns = current_table["columns"]
+    table_columns_string = ", ".join(":".join(column) for column in table_columns)
+    
+    table_rows = load_metadata(f"src/primitive_db/data/{table_name}.json")
+
+    print("Таблица: ", table_name)
+    print("Столбцы: ", table_columns_string)
+    print("Количество записей: ", len(table_rows))
 
 def insert(metadata, table_name, values):
     tables = metadata
@@ -95,7 +114,7 @@ def insert(metadata, table_name, values):
         value_count += 1
 
     columns_val = [col[0] for col in current_table_columns]
-    table_rows = load_metadata("src/primitive_db/data/users.json")
+    table_rows = load_metadata(f"src/primitive_db/data/{table_name}.json")
     id_count = 0
     new_row = [[col, value] for col, value in zip(columns_val, values)]
     if table_rows == {}:
@@ -110,4 +129,4 @@ def insert(metadata, table_name, values):
         new_row.insert(0,  ['ID', id_count])
         table_rows.append(new_row)
 
-    save_metadata("src/primitive_db/data/users.json", table_rows)
+    save_metadata(f"src/primitive_db/data/{table_name}.json", table_rows)

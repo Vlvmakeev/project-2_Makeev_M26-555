@@ -12,8 +12,8 @@ from .parser import sql_insert_parser
 
 from . import core
 
-tables_commands = {"create_table", "list_tables", "drop_table"}
-sql_commands = {"insert", "select", "update", "delete", "info"}
+tables_commands = {"create_table", "list_tables", "drop_table", "info"}
+sql_commands = {"insert", "select", "update", "delete"}
 system_commands = {"help", "exit"}
 available_commands = tables_commands | sql_commands | system_commands
 metadata = load_metadata("src/primitive_db/db_meta.json")
@@ -57,6 +57,9 @@ def welcome():
 
         case "insert":
             core.insert(metadata, args[0], args[1])
+
+        case "info":
+            core.info(metadata, args[1])
 
 
 def print_help():
