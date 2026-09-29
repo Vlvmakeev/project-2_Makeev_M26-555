@@ -1,10 +1,11 @@
 import sqlglot
 import sqlglot.expressions as exp
 
-def sql_parser(query):
+def sql_insert_parser(query):
     parsed = sqlglot.parse_one(query)
     
-    table_name = parsed.find(exp.Table)
+    table = parsed.find(exp.Table)
+    table_name = table.name
     row_values = []
     
     for row in parsed.find(exp.Values).expressions:
@@ -24,3 +25,5 @@ def sql_parser(query):
     
     print(f"Название таблицы: {table_name}")
     print(f"Параметры: {row_values}")
+
+    return [table_name, row_values]

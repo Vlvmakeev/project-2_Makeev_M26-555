@@ -8,7 +8,7 @@ import shlex
 
 from .utils import load_metadata, save_metadata
 
-from .parser import sql_parser
+from .parser import sql_insert_parser
 
 from . import core
 
@@ -22,17 +22,16 @@ def welcome():
     print("Первая попытка запустить проект!")
 
     command = prompt.string("Введите команду: ")
-    args = ""
-    user_command = ""
+    args = []
+    user_command = command.split()[0]
 
     if not command.strip():
         return
 
     if command.split()[0] in sql_commands:
-        sql_parser(command)
+        args = sql_insert_parser(command)
     else:
         args = shlex.split(command)
-        user_command = args[0]
 
     match user_command:
         case wrong_command if wrong_command not in available_commands:
@@ -57,7 +56,7 @@ def welcome():
             core.list_tables(metadata)
 
         case "insert":
-            core.insert(metadata, args[2], args[4])
+            core.insert(metadata, args[0], args[1])
 
 
 def print_help():
