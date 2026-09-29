@@ -100,14 +100,14 @@ def insert(metadata, table_name, values):
     new_row = [[col, value] for col, value in zip(columns_val, values)]
     if table_rows == {}:
         id_count = 1
-        rows = []
-        new_row.insert(0, id_count)
-        rows.append(
+        table_rows = []
+        new_row.insert(0, ['ID', id_count])
+        table_rows.append(
             new_row
         )
     else:
         id_count = len(table_rows) + 1
-        new_row.insert(0, id_count)
+        new_row.insert(0,  ['ID', id_count])
         table_rows.append(new_row)
 
     save_metadata("src/primitive_db/data/users.json", table_rows)
