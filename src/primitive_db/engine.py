@@ -8,7 +8,7 @@ import shlex
 
 from .utils import load_metadata, save_metadata
 
-from .parser import sql_insert_parser
+from .parser import sql_parser
 
 from . import core
 
@@ -23,17 +23,17 @@ def welcome():
 
     command = prompt.string("Введите команду: ")
     args = []
-    user_command = command.split()[0]
+    user_command_name = command.split()[0]
 
     if not command.strip():
         return
 
     if command.split()[0] in sql_commands:
-        args = sql_insert_parser(command)
+        args = sql_parser(command, user_command_name)
     else:
         args = shlex.split(command)
 
-    match user_command:
+    match user_command_name:
         case wrong_command if wrong_command not in available_commands:
             print(f"Функции {wrong_command} нет. Попробуйте снова.")
             return
@@ -60,6 +60,10 @@ def welcome():
 
         case "info":
             core.info(metadata, args[1])
+
+        case "select":
+            table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
+            core.select(table_data, args[1])
 
 
 def print_help():

@@ -1,5 +1,11 @@
 from .utils import load_metadata, save_metadata
 
+TYPE_MAP = {
+    "int": int,
+    "str": str,
+    "bool": bool,
+}
+
 def create_table(metadata, table_name, columns):
 
     valid_types = {"int", "str", "bool"}
@@ -94,13 +100,6 @@ def insert(metadata, table_name, values):
         return None
     
     value_count = 0
-
-
-    TYPE_MAP = {
-    "int": int,
-    "str": str,
-    "bool": bool,
-}
     
     for value in values:
         expected_type = TYPE_MAP[current_table_columns[value_count][1]]
@@ -130,3 +129,26 @@ def insert(metadata, table_name, values):
         table_rows.append(new_row)
 
     save_metadata(f"src/primitive_db/data/{table_name}.json", table_rows)
+
+def select(table_data, where_clause=None):
+    if where_clause is None:
+        print(table_data)
+    else:
+        where_clause_without_where = str(where_clause).replace("WHERE ", "").split("=")
+        where_content = [part.strip() for part in where_clause_without_where]
+        column_name = where_content[0]
+        column_value = where_content[1]
+
+        if column_value.isdigit():
+            column_value = int(column_value)
+        elif column_value == 'true':
+            return True
+        elif column_value == 'false':
+            return False
+
+        result_rows = [
+            row for row in table_data if dict(row).get(column_name) == column_value
+        ]
+        
+        print(result_rows)
+    
