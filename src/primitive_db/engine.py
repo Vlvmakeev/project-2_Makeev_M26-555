@@ -57,13 +57,21 @@ def welcome():
 
         case "insert":
             core.insert(metadata, args[0], args[1])
+            print(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
 
         case "info":
             core.info(metadata, args[1])
 
         case "select":
             table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
-            core.select(table_data, args[1])
+            result = core.select(table_data, args[1])
+            print(result)
+
+        case "delete":
+            table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
+            result = core.delete(table_data, args[1])
+            save_metadata(f"src/primitive_db/data/{args[0]}.json", result)
+            print(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
 
 
 def print_help():

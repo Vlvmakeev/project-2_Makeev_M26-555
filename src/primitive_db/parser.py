@@ -31,7 +31,7 @@ def sql_parser(query, command_name):
             
             return [table_name, row_values]
         
-        case "select":
+        case "select" | "delete":
             where_values = parsed.find(exp.Where)
             return [table_name, where_values]
 

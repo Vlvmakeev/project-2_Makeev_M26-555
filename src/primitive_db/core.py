@@ -130,6 +130,7 @@ def insert(metadata, table_name, values):
 
     save_metadata(f"src/primitive_db/data/{table_name}.json", table_rows)
 
+
 def select(table_data, where_clause=None):
     if where_clause is None:
         print(table_data)
@@ -150,5 +151,20 @@ def select(table_data, where_clause=None):
             row for row in table_data if dict(row).get(column_name) == column_value
         ]
         
-        print(result_rows)
+        return result_rows
+
+
+def delete(table_data, where_close):
+    table_rows = table_data
     
+    if where_close is None:
+        print(f"Ошибка: вы не передали параметры для фильтрации!")
+        return None
+
+    filtered_row = select(table_data, where_close)
+
+    for row in filtered_row:
+        if row in table_rows:
+            table_rows.remove(row)
+    
+    return table_rows
