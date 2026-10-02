@@ -2,10 +2,6 @@ import sys
 
 import prompt
 
-import sqlparse
-
-import shlex
-
 from .utils import load_metadata, save_metadata
 
 from .parser import sql_parser
@@ -22,16 +18,16 @@ def welcome():
     print("Первая попытка запустить проект!")
 
     command = prompt.string("Введите команду: ")
-    args = []
-    user_command_name = command.split()[0]
+    args = command.split()
+    user_command_name = args[0]
+    if len(args) > 1:
+        user_command_param = args[1]
 
     if not command.strip():
         return
 
     if command.split()[0] in sql_commands:
         args = sql_parser(command, user_command_name)
-    else:
-        args = shlex.split(command)
 
     match user_command_name:
         case wrong_command if wrong_command not in available_commands:
@@ -50,7 +46,7 @@ def welcome():
             core.create_table(metadata, table_name, columns)
         
         case "drop_table":
-            core.drop_table(metadata, args[1])
+            core.drop_table(metadata, user_command_param)
         
         case "list_tables":
             core.list_tables(metadata)
@@ -72,6 +68,12 @@ def welcome():
             result = core.delete(table_data, args[1])
             save_metadata(f"src/primitive_db/data/{args[0]}.json", result)
             print(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
+
+        case "update":
+            table_name = args[1]
+            table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
+            result = core.update(metadata, table_name, args[0], args[1])
+            print(result)
 
 
 def print_help():

@@ -168,3 +168,33 @@ def delete(table_data, where_close):
             table_rows.remove(row)
     
     return table_rows
+
+
+def update(table_data, table_name, set_close, where_close):
+    table_rows = table_data
+
+    if where_close is None:
+            print(f"Ошибка: вы не передали параметры для фильтрации!")
+            return None
+
+    filtered_row = select(table_data, where_close)
+
+    for row in filtered_row:
+        if row in table_rows:
+            updated_rows = []
+            index = table_rows.index(row)
+            id_value = row[0][1]
+            dict_row = dict(row)
+
+            set_dict = dict(set_close)
+
+            for item in row:
+                if item[0] is 'ID':
+                    continue
+                if item[0] in set_dict:
+                    item[1] = set_dict[item[0]]
+            updated_rows.append(row)
+
+        
+    save_metadata(f"src/primitive_db/data/{table_name}.json", table_rows)
+    return updated_rows
