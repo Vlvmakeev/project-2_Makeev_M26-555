@@ -70,9 +70,8 @@ def welcome():
             print(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
 
         case "update":
-            table_name = args[1]
             table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
-            result = core.update(metadata, table_name, args[0], args[1])
+            result = core.update(table_data, args[0], args[1], args[2])
             print(result)
 
 

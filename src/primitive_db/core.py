@@ -135,17 +135,15 @@ def select(table_data, where_clause=None):
     if where_clause is None:
         print(table_data)
     else:
-        where_clause_without_where = str(where_clause).replace("WHERE ", "").split("=")
-        where_content = [part.strip() for part in where_clause_without_where]
-        column_name = where_content[0]
-        column_value = where_content[1]
+        column_name = where_clause[0]
+        column_value = where_clause[1]
 
         if column_value.isdigit():
             column_value = int(column_value)
         elif column_value == 'true':
-            return True
+            column_value = True
         elif column_value == 'false':
-            return False
+            column_value = False
 
         result_rows = [
             row for row in table_data if dict(row).get(column_name) == column_value
@@ -161,9 +159,21 @@ def delete(table_data, where_close):
         print(f"Ошибка: вы не передали параметры для фильтрации!")
         return None
 
-    filtered_row = select(table_data, where_close)
+    column_name = where_close[0]
+    column_value = where_close[1]
+    
+    if column_value.isdigit():
+        column_value = int(column_value)
+    elif column_value == 'true':
+        column_value = True
+    elif column_value == 'false':
+        column_value = False
+    
+    result_rows = [
+        row for row in table_data if dict(row).get(column_name) == column_value
+    ]
 
-    for row in filtered_row:
+    for row in result_rows:
         if row in table_rows:
             table_rows.remove(row)
     
@@ -177,9 +187,24 @@ def update(table_data, table_name, set_close, where_close):
             print(f"Ошибка: вы не передали параметры для фильтрации!")
             return None
 
-    filtered_row = select(table_data, where_close)
+    column_name = where_close[0]
+    column_value = where_close[1]
+        
+    if column_value.isdigit():
+        column_value = int(column_value)
+    elif column_value == 'true':
+        column_value = True
+    elif column_value == 'false':
+        column_value = False
 
-    for row in filtered_row:
+    for row in table_data:
+        print(f"Вот что получаем: {row}")
+      
+    result_rows = [
+        row for row in table_data if dict(row).get(column_name) == column_value
+    ]
+
+    for row in result_rows:
         if row in table_rows:
             updated_rows = []
             index = table_rows.index(row)
@@ -189,7 +214,7 @@ def update(table_data, table_name, set_close, where_close):
             set_dict = dict(set_close)
 
             for item in row:
-                if item[0] is 'ID':
+                if item[0] == 'ID':
                     continue
                 if item[0] in set_dict:
                     item[1] = set_dict[item[0]]
