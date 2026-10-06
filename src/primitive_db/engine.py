@@ -4,11 +4,12 @@ import prompt
 
 import shlex
 
-from .utils import load_metadata, save_metadata
+from .utils import load_metadata, save_metadata, prettier_table
 
 from .parser import sql_parser
 
 from . import core
+
 
 tables_commands = {"create_table", "list_tables", "drop_table", "info"}
 sql_commands = {"insert", "select", "update", "delete"}
@@ -55,7 +56,7 @@ def welcome():
 
         case "insert":
             core.insert(metadata, args[0], args[1])
-            print(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
+            prettier_table(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
 
         case "info":
             core.info(metadata, args[1])
@@ -63,18 +64,19 @@ def welcome():
         case "select":
             table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
             result = core.select(table_data, args[1])
-            print(result)
+            
+            prettier_table(result)
 
         case "delete":
             table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
             result = core.delete(table_data, args[1])
             save_metadata(f"src/primitive_db/data/{args[0]}.json", result)
-            print(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
+            prettier_table(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
 
         case "update":
             table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
             result = core.update(table_data, args[0], args[1], args[2])
-            print(result)
+            prettier_table(result)
 
 
 def print_help():

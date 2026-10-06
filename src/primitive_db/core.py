@@ -133,7 +133,7 @@ def insert(metadata, table_name, values):
 
 def select(table_data, where_clause=None):
     if where_clause is None:
-        print(table_data)
+        return table_data
     else:
         column_name = where_clause[0]
         column_value = where_clause[1]
@@ -144,6 +144,8 @@ def select(table_data, where_clause=None):
             column_value = True
         elif column_value == 'false':
             column_value = False
+        else:
+            column_value = column_value.strip("'").strip('"')
 
         result_rows = [
             row for row in table_data if dict(row).get(column_name) == column_value
@@ -168,6 +170,8 @@ def delete(table_data, where_close):
         column_value = True
     elif column_value == 'false':
         column_value = False
+    else:
+        column_value = column_value.strip("'").strip('"')
     
     result_rows = [
         row for row in table_data if dict(row).get(column_name) == column_value
