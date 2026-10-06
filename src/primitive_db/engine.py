@@ -2,6 +2,8 @@ import sys
 
 import prompt
 
+import shlex
+
 from .utils import load_metadata, save_metadata
 
 from .parser import sql_parser
@@ -18,7 +20,7 @@ def welcome():
     print("Первая попытка запустить проект!")
 
     command = prompt.string("Введите команду: ")
-    args = command.split()
+    args = shlex.split(command)
     user_command_name = args[0]
     if len(args) > 1:
         user_command_param = args[1]

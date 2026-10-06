@@ -192,26 +192,36 @@ def update(table_data, table_name, set_close, where_close):
         
     if column_value.isdigit():
         column_value = int(column_value)
-    elif column_value == 'true':
+    elif column_value in ('true', 'True'):
         column_value = True
-    elif column_value == 'false':
+    elif column_value in ('false', 'False'):
         column_value = False
-
-    for row in table_data:
-        print(f"Вот что получаем: {row}")
+    else:
+        column_value = column_value.strip("'").strip('"')
       
     result_rows = [
         row for row in table_data if dict(row).get(column_name) == column_value
     ]
 
+    updated_rows = []
+
     for row in result_rows:
         if row in table_rows:
-            updated_rows = []
             index = table_rows.index(row)
             id_value = row[0][1]
             dict_row = dict(row)
 
-            set_dict = dict(set_close)
+            set_close_value = set_close[1]
+
+            if set_close_value.isdigit():
+                set_close_value = int(set_close_value)
+            elif set_close_value in ('true', 'True'):
+                set_close_value = True
+            elif set_close_value in ('false', 'False'):
+                set_close_value = False
+
+
+            set_dict = {set_close[0]: set_close_value}
 
             for item in row:
                 if item[0] == 'ID':

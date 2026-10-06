@@ -16,9 +16,6 @@ def sql_parser(query, command_name):
             else:
                 return [table_name, None]
 
-
-            
-
         case "update":
             table_name = query.split()[1]
             after_set = query.split("set")[1]
