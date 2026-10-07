@@ -18,8 +18,6 @@ available_commands = tables_commands | sql_commands | system_commands
 metadata = load_metadata("src/primitive_db/db_meta.json")
 
 def welcome():
-    print("Первая попытка запустить проект!")
-
     command = prompt.string("Введите команду: ")
     args = shlex.split(command)
     user_command_name = args[0]
@@ -88,6 +86,7 @@ def print_help():
     print("<command> drop_table <имя_таблицы> - удалить таблицу")
     
     print("\n***Операции с данными***")
+    print("Функции:")
     print("<command> insert into <имя_таблицы> values (<значение1>, <значение2>, ...) - создать запись.")
     print("<command> select from <имя_таблицы> where <столбец> = <значение> - прочитать записи по условию.")
     print("<command> select from <имя_таблицы> - прочитать все записи.")

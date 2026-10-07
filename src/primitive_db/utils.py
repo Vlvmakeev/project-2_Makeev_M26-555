@@ -10,8 +10,17 @@ def load_metadata(filepath):
         return {}
 
 def save_metadata(filepath, data):
-    with open(filepath, 'w', encoding='utf-8') as file:
-        json.dump(data, file, ensure_ascii=False, indent=4)
+    try:
+        with open(filepath, 'w', encoding='utf-8') as file:
+                json.dump(data, file, ensure_ascii=False, indent=4)
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Ошибка: файл не найден!")
+
+def load_table_data(table_name):
+    return load_metadata(f"src/primitive_db/data/{table_name}.json")
+
+def save_table_data(table_name, data):
+    save_metadata(f"src/primitive_db/data/{table_name}.json", data)
 
 def prettier_table(data):
     pretty_table = PrettyTable()

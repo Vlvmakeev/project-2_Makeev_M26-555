@@ -1,4 +1,4 @@
-from .utils import load_metadata, save_metadata
+from .utils import load_metadata, save_metadata, load_table_data, save_table_data
 
 TYPE_MAP = {
     "int": int,
@@ -25,7 +25,7 @@ def create_table(metadata, table_name, columns):
 
     for col_name, col_type in all_columns:
         if col_type not in valid_types:
-            print(f"Ошибка: Недопустимый тип данных '{col_type}' для столбца '{col_name}'"
+            print(f"Ошибка: Недопустимый тип данных '{col_type}' для столбца '{col_name}'. "
                   f"Разрешены только: {', '.join(valid_types)}")
             return None
 
@@ -44,7 +44,7 @@ def create_table(metadata, table_name, columns):
 def drop_table(metadata, table_name):
     tables = metadata
     if table_name not in tables:
-        print(f"Ошибка: таблицы {table_name} не существует!")
+        print(f"Ошибка: таблица {table_name} не существует!")
         return None
     tables.pop(table_name)
 
@@ -113,7 +113,7 @@ def insert(metadata, table_name, values):
         value_count += 1
 
     columns_val = [col[0] for col in current_table_columns]
-    table_rows = load_metadata(f"src/primitive_db/data/{table_name}.json")
+    table_rows = load_table_data(table_name)
     id_count = 0
     new_row = [[col, value] for col, value in zip(columns_val, values)]
     if table_rows == {}:
@@ -128,7 +128,7 @@ def insert(metadata, table_name, values):
         new_row.insert(0,  ['ID', id_count])
         table_rows.append(new_row)
 
-    save_metadata(f"src/primitive_db/data/{table_name}.json", table_rows)
+    save_table_data(table_name, table_rows)
 
 
 def select(table_data, where_clause=None):
@@ -235,5 +235,5 @@ def update(table_data, table_name, set_close, where_close):
             updated_rows.append(row)
 
         
-    save_metadata(f"src/primitive_db/data/{table_name}.json", table_rows)
+    save_table_data(table_name, table_rows)
     return updated_rows
