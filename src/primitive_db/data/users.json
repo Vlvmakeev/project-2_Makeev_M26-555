@@ -34,23 +34,5 @@
             "is_active",
             false
         ]
-    ],
-    [
-        [
-            "ID",
-            4
-        ],
-        [
-            "name",
-            "Kevin"
-        ],
-        [
-            "age",
-            22
-        ],
-        [
-            "is_active",
-            false
-        ]
     ]
 ]

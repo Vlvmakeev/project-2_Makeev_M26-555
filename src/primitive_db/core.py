@@ -1,7 +1,13 @@
-from .utils import load_metadata, save_metadata, load_table_data, save_table_data
-from src.decorators import handle_db_errors, confirm_action, log_time, create_cacher, clear_cache
-
 import src.constants as constants
+from src.decorators import (
+    clear_cache,
+    confirm_action,
+    create_cacher,
+    handle_db_errors,
+    log_time,
+)
+
+from .utils import load_metadata, load_table_data, save_metadata, save_table_data
 
 _cache_result = create_cacher()
 
@@ -23,7 +29,8 @@ def create_table(metadata, table_name, columns):
 
     for col_name, col_type in all_columns:
         if col_type not in constants.VALID_TYPES:
-            print(f"Ошибка: Недопустимый тип данных '{col_type}' для столбца '{col_name}'. "
+            print(f"Ошибка: Недопустимый тип данных "
+                "'{col_type}' для столбца '{col_name}'. "
                   f"Разрешены только: {', '.join(constants.VALID_TYPES)}")
             return None
 
@@ -100,7 +107,8 @@ def insert(metadata, table_name, values):
     ]
 
     if len(values) != len(current_table_columns):
-        print(f"Ошибка: количество переданных значений не соответствует количеству полей таблицы {table_name} !")
+        print("Ошибка: количество переданных значений "
+            "не соответствует количеству полей таблицы {table_name} !")
         print(len(values))
         print(values)
         print(len(current_table_columns))
@@ -114,7 +122,8 @@ def insert(metadata, table_name, values):
         if not isinstance(value, expected_type):
             print(
                 f"Ошибка: тип данных переданного значения {value} "
-                f"не соответствует ожидаемому типу {current_table_columns[value_count][1]} "
+                "не соответствует ожидаемому "
+                f"типу {current_table_columns[value_count][1]} "
                 f"поля {current_table_columns[value_count][0]} "
                 f"таблицы {table_name} !"
             )
@@ -139,7 +148,7 @@ def insert(metadata, table_name, values):
     save_table_data(table_name, table_rows)
 
     clear_cache()
-    
+
     return id_count
 
 
@@ -185,7 +194,7 @@ def delete(table_data, table_name, where_close):
     table_rows = table_data
     
     if where_close is None:
-        print(f"Ошибка: вы не передали параметры для фильтрации!")
+        print("Ошибка: вы не передали параметры для фильтрации!")
         return None
 
     column_name = where_close[0]
@@ -219,7 +228,7 @@ def update(table_data, table_name, set_close, where_close):
     table_rows = table_data
 
     if where_close is None:
-            print(f"Ошибка: вы не передали параметры для фильтрации!")
+            print("Ошибка: вы не передали параметры для фильтрации!")
             return None
 
     column_name = where_close[0]
@@ -242,9 +251,6 @@ def update(table_data, table_name, set_close, where_close):
 
     for row in result_rows:
         if row in table_rows:
-            index = table_rows.index(row)
-            id_value = row[0][1]
-            dict_row = dict(row)
 
             set_close_value = set_close[1]
 

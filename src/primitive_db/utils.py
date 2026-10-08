@@ -2,6 +2,7 @@ import json
 
 from prettytable import PrettyTable
 
+
 def load_metadata(filepath):
     """Загружает содержимое файла по пути
     Args:
