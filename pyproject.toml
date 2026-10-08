@@ -2,31 +2,33 @@
 name = "makeev-m26-555"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "VladimirMakeev",email = "VMakeev@alfabank.ru"}
-]
+authors = [{ name = "VladimirMakeev", email = "VMakeev@alfabank.ru" }]
 requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 dependencies = [
     "prompt>=0.4.1,<0.5.0",
     "sqlparse (>=0.6.0,<0.7.0)",
     "prettytable (>=3.18.0,<4.0.0)",
-    "sqlglot (>=30.20.0,<31.0.0)"
+    "sqlglot (>=30.20.0,<31.0.0)",
 ]
 
+[project.scripts]
+project = "src.primitive_db.main:main"
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
 
+[tool.uv]
 
-[tool.poetry]
- packages = [
-     { include = "src" },
- ]
-
-
-[tool.poetry.scripts]
-project = "src.primitive_db.main:main"
+[tool.uv.build-backend]
+module-name = ["src"]
+module-root = ""
 
 
 [tool.ruff]
