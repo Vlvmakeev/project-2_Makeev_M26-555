@@ -12,7 +12,6 @@ def sql_parser(query, command_name):
                 
                 where_data = [word.strip() for word in query.split("where")[1]
                 .strip().split("=")]
-                print(where_data)
 
                 return [table_name, where_data]
             else:
