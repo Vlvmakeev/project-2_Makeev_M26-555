@@ -60,8 +60,7 @@ def welcome():
             core.info(metadata, args[1])
 
         case "select":
-            table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
-            result = core.select(table_data, args[1])
+            result = core.select(args[0], args[1])
             
             prettier_table(result)
 

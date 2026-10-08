@@ -1,14 +1,12 @@
 from .utils import load_metadata, save_metadata, load_table_data, save_table_data
+from src.decorators import handle_db_errors, confirm_action, log_time, create_cacher, clear_cache
 
-TYPE_MAP = {
-    "int": int,
-    "str": str,
-    "bool": bool,
-}
+import src.constants as constants
 
+_cache_result = create_cacher()
+
+@handle_db_errors
 def create_table(metadata, table_name, columns):
-
-    valid_types = {"int", "str", "bool"}
     
     tables = metadata
 
@@ -24,9 +22,9 @@ def create_table(metadata, table_name, columns):
         all_columns = list(columns)
 
     for col_name, col_type in all_columns:
-        if col_type not in valid_types:
+        if col_type not in constants.VALID_TYPES:
             print(f"Ошибка: Недопустимый тип данных '{col_type}' для столбца '{col_name}'. "
-                  f"Разрешены только: {', '.join(valid_types)}")
+                  f"Разрешены только: {', '.join(constants.VALID_TYPES)}")
             return None
 
     tables[table_name] = {
@@ -36,11 +34,13 @@ def create_table(metadata, table_name, columns):
     columns_string = ", ".join([f"{name}:{dtype}" for name, dtype in all_columns])
     print(f"Таблица '{table_name}' успешно создана со столбцами: {columns_string}")
 
-    save_metadata("src/primitive_db/db_meta.json", tables)
+    save_metadata(constants.META_FILE, tables)
 
-    return load_metadata("src/primitive_db/db_meta.json")
+    return load_metadata(constants.META_FILE)
 
 
+@confirm_action("удаление таблицы")
+@handle_db_errors
 def drop_table(metadata, table_name):
     tables = metadata
     if table_name not in tables:
@@ -50,15 +50,17 @@ def drop_table(metadata, table_name):
 
     print(f"Таблица {table_name} успешно удалена.")
 
-    save_metadata("src/primitive_db/db_meta.json", tables)
+    save_metadata(constants.META_FILE, tables)
 
-    return load_metadata("src/primitive_db/db_meta.json")
+    return load_metadata(constants.META_FILE)
 
 
+@handle_db_errors
 def list_tables(metadata):
     for key in metadata:
         print("-", key)
 
+@handle_db_errors
 def info(metadata, table_name):
     tables = metadata
     
@@ -79,6 +81,8 @@ def info(metadata, table_name):
     print("Столбцы: ", table_columns_string)
     print("Количество записей: ", len(table_rows))
 
+@log_time
+@handle_db_errors
 def insert(metadata, table_name, values):
     tables = metadata
 
@@ -102,7 +106,7 @@ def insert(metadata, table_name, values):
     value_count = 0
     
     for value in values:
-        expected_type = TYPE_MAP[current_table_columns[value_count][1]]
+        expected_type = constants.TYPE_MAP[current_table_columns[value_count][1]]
         if not isinstance(value, expected_type):
             print(
                 f"Ошибка: тип данных переданного значения {value} "
@@ -130,8 +134,23 @@ def insert(metadata, table_name, values):
 
     save_table_data(table_name, table_rows)
 
+    clear_cache()
 
-def select(table_data, where_clause=None):
+
+def _fetch_table_data(table_name):
+    """Загрузка данных таблицы через кэш."""
+    return _cache_result(table_name, lambda: load_table_data(table_name))
+
+@log_time
+@handle_db_errors
+def select(table_name, where_clause=None):
+    """Выборка с кэширование сырых данных таблицы."""
+
+    table_data = _fetch_table_data(table_name)
+
+    if not table_data:
+        return []
+
     if where_clause is None:
         return table_data
     else:
@@ -153,7 +172,8 @@ def select(table_data, where_clause=None):
         
         return result_rows
 
-
+@confirm_action("удаление записи")
+@handle_db_errors
 def delete(table_data, where_close):
     table_rows = table_data
     
@@ -180,10 +200,11 @@ def delete(table_data, where_close):
     for row in result_rows:
         if row in table_rows:
             table_rows.remove(row)
-    
+    clear_cache()
     return table_rows
 
 
+@handle_db_errors
 def update(table_data, table_name, set_close, where_close):
     table_rows = table_data
 
@@ -236,4 +257,5 @@ def update(table_data, table_name, set_close, where_close):
 
         
     save_table_data(table_name, table_rows)
+    clear_cache()
     return updated_rows
