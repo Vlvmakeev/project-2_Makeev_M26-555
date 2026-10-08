@@ -174,3 +174,21 @@
 
 ```sh
 curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 1. Установить зависимости
+make install
+
+# 2. Запустить приложение и поработать с БД
+make project
+
+# 3. Проверить код линтером
+make lint
+
+# 4. Собрать дистрибутив
+make build
+
+# 5. Проверить установку из собранного пакета
+make package-install
+
+# 6. Проверить публикацию (без реальной загрузки)
+make publish
