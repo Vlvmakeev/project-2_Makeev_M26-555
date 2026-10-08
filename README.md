@@ -159,7 +159,6 @@
 
 - Python >= 3.12
 - [uv](https://docs.astral.sh/uv/) >= 0.12.13, < 0.13.0
-- Poetry >= 1.2.0
 - Ruff
 
 ---
