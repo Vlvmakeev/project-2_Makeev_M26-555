@@ -49,15 +49,16 @@ def log_time(func):
         return result
     return wrapper
 
+_cache_store = {"cache": {}}
+
 def create_cacher():
-    """Возвращает функцию cache_result с кэшем в замыкании.
-    
+    """Возвращает функцию cache_result с общим кэшем.
+
     Returns:
         callable: cache_result(key, value_func)
     """
-    cache = {}
-
     def cache_result(key, value_func):
+        cache = _cache_store["cache"]
         if key in cache:
             return cache[key]
         result = value_func()
@@ -67,6 +68,10 @@ def create_cacher():
     return cache_result
 
 def clear_cache():
-    """Глобальный сброс кэша (создаем новый кэшер)."""
-    global _cache_result
-    _cache_result = create_cacher()
+    """Очищает общий кэш.
+
+    Так как все кэшеры, созданные через create_cacher,
+    используют один и тот же словарь _cache_store["cache"],
+    очистка затронет их все.
+    """
+    _cache_store["cache"].clear()

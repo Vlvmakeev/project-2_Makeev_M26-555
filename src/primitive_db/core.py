@@ -7,7 +7,7 @@ _cache_result = create_cacher()
 
 @handle_db_errors
 def create_table(metadata, table_name, columns):
-    
+    """Создает таблицу в базе данных"""
     tables = metadata
 
     if table_name in tables:
@@ -42,6 +42,7 @@ def create_table(metadata, table_name, columns):
 @confirm_action("удаление таблицы")
 @handle_db_errors
 def drop_table(metadata, table_name):
+    """Удаляет таблицу в базе данных"""
     tables = metadata
     if table_name not in tables:
         print(f"Ошибка: таблица {table_name} не существует!")
@@ -57,11 +58,13 @@ def drop_table(metadata, table_name):
 
 @handle_db_errors
 def list_tables(metadata):
+    """Получает список таблиц из базы данных"""
     for key in metadata:
         print("-", key)
 
 @handle_db_errors
 def info(metadata, table_name):
+    """Получает информацию о таблице из базы данных"""
     tables = metadata
     
     if table_name not in tables:
@@ -84,6 +87,7 @@ def info(metadata, table_name):
 @log_time
 @handle_db_errors
 def insert(metadata, table_name, values):
+    """Добавляет запись в таблицу из базы данных"""
     tables = metadata
 
     if table_name not in tables:
@@ -135,6 +139,8 @@ def insert(metadata, table_name, values):
     save_table_data(table_name, table_rows)
 
     clear_cache()
+    
+    return id_count
 
 
 def _fetch_table_data(table_name):
@@ -172,9 +178,10 @@ def select(table_name, where_clause=None):
         
         return result_rows
 
-@confirm_action("удаление записи")
 @handle_db_errors
-def delete(table_data, where_close):
+@confirm_action("удаление записи")
+def delete(table_data, table_name, where_close):
+    """Удаляет запись из таблицы из базы данных"""
     table_rows = table_data
     
     if where_close is None:
@@ -200,12 +207,15 @@ def delete(table_data, where_close):
     for row in result_rows:
         if row in table_rows:
             table_rows.remove(row)
+            print(f"Запись с ID={row[0][1]} успешно удалена из таблицы {table_name}.")
+
     clear_cache()
     return table_rows
 
 
 @handle_db_errors
 def update(table_data, table_name, set_close, where_close):
+    """Обновляет запись из таблицы из базы данных"""
     table_rows = table_data
 
     if where_close is None:

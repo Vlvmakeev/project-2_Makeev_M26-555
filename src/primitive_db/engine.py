@@ -6,6 +6,8 @@ import shlex
 
 from .utils import load_metadata, save_metadata, prettier_table
 
+from src.decorators import clear_cache
+
 from .parser import sql_parser
 
 from . import core
@@ -18,6 +20,7 @@ available_commands = tables_commands | sql_commands | system_commands
 metadata = load_metadata("src/primitive_db/db_meta.json")
 
 def welcome():
+    """Стартовая функция приветствия пользователя и получение ввода"""
     command = prompt.string("Введите команду: ")
     args = shlex.split(command)
     user_command_name = args[0]
@@ -53,8 +56,10 @@ def welcome():
             core.list_tables(metadata)
 
         case "insert":
-            core.insert(metadata, args[0], args[1])
-            prettier_table(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
+            created_id = core.insert(metadata, args[0], args[1])
+            table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
+            print(f"Запись с ID={created_id} успешно добавлена в таблицу {args[0]}.")
+            prettier_table(table_data)
 
         case "info":
             core.info(metadata, args[1])
@@ -66,13 +71,20 @@ def welcome():
 
         case "delete":
             table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
-            result = core.delete(table_data, args[1])
+            result = core.delete(table_data, args[0], args[1])
+            if result is None:
+                return
             save_metadata(f"src/primitive_db/data/{args[0]}.json", result)
             prettier_table(load_metadata(f"src/primitive_db/data/{args[0]}.json"))
 
         case "update":
             table_data = load_metadata(f"src/primitive_db/data/{args[0]}.json")
             result = core.update(table_data, args[0], args[1], args[2])
+            if result is None:
+                return
+            for row in result:
+                user_id = row[0][1]
+                print(f"Запись с ID={user_id} в таблице {args[0]} успешно обновлена.")
             prettier_table(result)
 
 
